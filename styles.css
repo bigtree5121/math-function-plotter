@@ -1,0 +1,485 @@
+/* 全局样式重置 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+
+/* 容器布局 */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 20px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* 头部样式 */
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+    color: #4a5568;
+    font-size: 2.2em;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.header p {
+    color: #718096;
+    font-size: 1.1em;
+}
+
+/* 主内容区域 */
+.main-content {
+    display: flex;
+    gap: 20px;
+    flex: 1;
+    min-height: 600px;
+}
+
+/* 左侧控制面板 */
+.control-panel {
+    width: 350px;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+    max-height: calc(100vh - 200px);
+}
+
+.control-panel h3 {
+    color: #2d3748;
+    font-size: 1.2em;
+    margin-bottom: 15px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 8px;
+}
+
+/* 函数输入区域 */
+.input-section {
+    margin-bottom: 25px;
+}
+
+.function-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.function-input-group label {
+    font-weight: 600;
+    color: #4a5568;
+}
+
+#functionInput {
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 16px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.3s ease;
+}
+
+#functionInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-secondary {
+    background: #a0aec0;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background: #718096;
+}
+
+.btn-danger {
+    background: #e53e3e;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c53030;
+}
+
+/* 错误消息 */
+.error-message {
+    color: #e53e3e;
+    font-size: 14px;
+    margin-top: 5px;
+    padding: 8px;
+    background: rgba(229, 62, 62, 0.1);
+    border-radius: 4px;
+    display: none;
+}
+
+.error-message.show {
+    display: block;
+}
+
+/* 模板按钮区域 */
+.template-section {
+    margin-bottom: 25px;
+}
+
+.template-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.template-btn {
+    padding: 8px 12px;
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.template-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* 坐标系控制 */
+.coordinate-section {
+    margin-bottom: 25px;
+}
+
+.range-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.range-controls label {
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.range-controls input[type="number"] {
+    width: 60px;
+    padding: 4px 6px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin: 0 5px;
+}
+
+.control-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+/* 函数列表 */
+.function-list-section {
+    margin-bottom: 20px;
+}
+
+.function-list {
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.no-functions {
+    color: #a0aec0;
+    font-style: italic;
+    text-align: center;
+    padding: 20px;
+}
+
+.function-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+    margin-bottom: 8px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+}
+
+.function-info {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+}
+
+.function-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.function-controls button {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.toggle-btn {
+    background: #48bb78;
+    color: white;
+}
+
+.toggle-btn.hidden {
+    background: #a0aec0;
+}
+
+.delete-btn {
+    background: #e53e3e;
+    color: white;
+}
+
+/* 右侧绘图区域 */
+.plot-area {
+    flex: 1;
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#plotCanvas {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: white;
+    max-width: 100%;
+    height: auto;
+}
+
+.coordinate-info {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', monospace;
+    font-size: 14px;
+    pointer-events: none;
+}
+
+/* 底部状态栏 */
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px 20px;
+    margin-top: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.status-info {
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.help-info details {
+    cursor: pointer;
+}
+
+.help-info summary {
+    color: #667eea;
+    font-weight: 600;
+    outline: none;
+}
+
+.help-content {
+    position: absolute;
+    right: 20px;
+    bottom: 70px;
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: 300px;
+    z-index: 1000;
+}
+
+.help-content ul {
+    margin-left: 20px;
+    margin-top: 8px;
+}
+
+.help-content li {
+    margin-bottom: 4px;
+}
+
+/* 响应式设计 */
+@media (max-width: 1024px) {
+    .main-content {
+        flex-direction: column;
+    }
+    
+    .control-panel {
+        width: 100%;
+        max-height: none;
+    }
+    
+    .template-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+    
+    #plotCanvas {
+        width: 100%;
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 10px;
+    }
+    
+    .header h1 {
+        font-size: 1.8em;
+    }
+    
+    .control-panel {
+        padding: 15px;
+    }
+    
+    .template-buttons {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .footer {
+        flex-direction: column;
+        gap: 10px;
+        text-align: center;
+    }
+    
+    .help-content {
+        position: fixed;
+        right: 10px;
+        left: 10px;
+        bottom: 10px;
+        width: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .header h1 {
+        font-size: 1.5em;
+    }
+    
+    .template-buttons {
+        grid-template-columns: 1fr;
+    }
+    
+    .range-controls {
+        font-size: 13px;
+    }
+    
+    .function-input-group {
+        gap: 8px;
+    }
+    
+    .control-buttons {
+        gap: 8px;
+    }
+}
+
+/* 函数颜色 */
+.color-blue { border-left-color: #3182ce; }
+.color-red { border-left-color: #e53e3e; }
+.color-green { border-left-color: #38a169; }
+.color-orange { border-left-color: #dd6b20; }
+.color-purple { border-left-color: #805ad5; }
+
+/* 颜色选择器样式 */
+.color-picker {
+    width: 28px;
+    height: 28px;
+    border: 2px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+    transition: all 0.2s ease;
+}
+
+.color-picker:hover {
+    border-color: #667eea;
+    transform: scale(1.1);
+}
+
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}

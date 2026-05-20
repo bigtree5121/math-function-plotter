@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#667eea">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="函数绘图">
+    <title>初中数学函数绘制工具</title>
+    <link rel="manifest" href="manifest.json">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- 头部标题 -->
+        <header class="header">
+            <h1>📊 初中数学函数绘制工具</h1>
+            <p>输入函数方程，立即看到图形效果</p>
+        </header>
+
+        <div class="main-content">
+            <!-- 左侧控制面板 -->
+            <div class="control-panel">
+                <!-- 函数输入区域 -->
+                <div class="input-section">
+                    <h3>函数输入</h3>
+                    <div class="function-input-group">
+                        <label for="functionInput">输入函数：</label>
+                        <input 
+                            type="text" 
+                            id="functionInput" 
+                            placeholder="例如：x^2 + 2*x + 1" 
+                            autocomplete="off"
+                        >
+                        <button id="addFunction" class="btn btn-primary">添加函数</button>
+                    </div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <!-- 快速模板区域 -->
+                <div class="template-section">
+                    <h3>常用模板</h3>
+                    <div class="template-buttons">
+                        <button class="template-btn" data-template="x + 1">一次函数</button>
+                        <button class="template-btn" data-template="x^2">二次函数</button>
+                        <button class="template-btn" data-template="1/x">反比例函数</button>
+                        <button class="template-btn" data-template="abs(x)">绝对值函数</button>
+                        <button class="template-btn" data-template="2*x">正比例函数</button>
+                        <button class="template-btn" data-template="5">常数函数</button>
+                    </div>
+                </div>
+
+                <!-- 坐标系控制 -->
+                <div class="coordinate-section">
+                    <h3>坐标系设置</h3>
+                    <div class="range-controls">
+                        <label>
+                            X轴范围：
+                            <input type="number" id="xMin" value="-10" min="-100" max="0"> 到
+                            <input type="number" id="xMax" value="10" min="0" max="100">
+                        </label>
+                        <label>
+                            Y轴范围：
+                            <input type="number" id="yMin" value="-10" min="-100" max="0"> 到
+                            <input type="number" id="yMax" value="10" min="0" max="100">
+                        </label>
+                    </div>
+                    <div class="control-buttons">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="showGrid" checked>
+                            显示网格
+                        </label>
+                        <button id="resetView" class="btn btn-secondary">重置视图</button>
+                        <button id="clearAll" class="btn btn-danger">清除所有</button>
+                    </div>
+                </div>
+
+                <!-- 当前函数列表 -->
+                <div class="function-list-section">
+                    <h3>当前函数</h3>
+                    <div id="functionList" class="function-list">
+                        <p class="no-functions">暂无函数，请添加函数开始绘制</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧绘图区域 -->
+            <div class="plot-area">
+                <canvas id="plotCanvas" width="800" height="600"></canvas>
+                <div class="coordinate-info" id="coordinateInfo">
+                    坐标：(0, 0)
+                </div>
+            </div>
+        </div>
+
+        <!-- 底部状态栏 -->
+        <footer class="footer">
+            <div class="status-info">
+                <span id="statusMessage">就绪 - 请输入函数开始绘制</span>
+            </div>
+            <div class="help-info">
+                <details>
+                    <summary>使用帮助</summary>
+                    <div class="help-content">
+                        <p><strong>支持的运算符：</strong></p>
+                        <ul>
+                            <li>+ - * / (基本运算)</li>
+                            <li>^ (乘方，如 x^2)</li>
+                            <li>abs(x) (绝对值)</li>
+                            <li>sqrt(x) (平方根)</li>
+                            <li>() (括号)</li>
+                        </ul>
+                        <p><strong>函数示例：</strong></p>
+                        <ul>
+                            <li>一次函数：2*x + 3</li>
+                            <li>二次函数：x^2 - 4*x + 3</li>
+                            <li>反比例函数：6/x</li>
+                            <li>绝对值函数：abs(x - 2)</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </footer>
+    </div>
+
+    <script src="math-parser.js"></script>
+    <script src="plot-engine.js"></script>
+    <script src="app.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('service-worker.js')
+                    .then(registration => {
+                        console.log('SW registered:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('SW registration failed:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

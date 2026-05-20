@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>初中数学函数绘制工具</title>
+    <style>
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body {
+    font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    color: #333;
+}
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+.header {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    text-align: center;
+    margin-bottom: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+.header h1 {
+    color: #4a5568;
+    font-size: 1.5em;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+.header p {
+    color: #718096;
+    font-size: 1em;
+}
+.main-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    flex: 1;
+    min-height: 400px;
+}
+.control-panel {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+.control-panel h3 {
+    color: #2d3748;
+    font-size: 1.1em;
+    margin-bottom: 12px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 6px;
+}
+.input-section {
+    margin-bottom: 20px;
+}
+.function-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.function-input-group label {
+    font-weight: 600;
+    color: #4a5568;
+}
+#functionInput {
+    padding: 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 15px;
+    font-family: 'Courier New', monospace;
+    transition: border-color 0.3s ease;
+}
+#functionInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: none;
+}
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+.btn-primary:hover {
+    background: #5a67d8;
+}
+.btn-secondary {
+    background: #a0aec0;
+    color: white;
+}
+.btn-secondary:hover {
+    background: #718096;
+}
+.btn-danger {
+    background: #e53e3e;
+    color: white;
+}
+.btn-danger:hover {
+    background: #c53030;
+}
+.error-message {
+    color: #e53e3e;
+    font-size: 13px;
+    margin-top: 5px;
+    padding: 6px;
+    background: rgba(229, 62, 62, 0.1);
+    border-radius: 4px;
+    display: none;
+}
+.error-message.show {
+    display: block;
+}
+.template-section {
+    margin-bottom: 20px;
+}
+.template-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+}
+.template-btn {
+    padding: 8px 10px;
+    background: #f7fafc;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.template-btn:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+.coordinate-section {
+    margin-bottom: 20px;
+}
+.range-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 12px;
+}
+.range-controls label {
+    font-size: 13px;
+    color: #4a5568;
+}
+.range-controls input[type="number"] {
+    width: 55px;
+    padding: 4px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    margin: 0 4px;
+}
+.control-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    cursor: pointer;
+}
+.checkbox-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+}
+.function-list-section {
+    margin-bottom: 15px;
+}
+.function-list {
+    max-height: 150px;
+    overflow-y: auto;
+}
+.no-functions {
+    color: #a0aec0;
+    font-style: italic;
+    text-align: center;
+    padding: 15px;
+}
+.function-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 6px;
+    background: #f7fafc;
+    border-radius: 8px;
+    border-left: 4px solid transparent;
+}
+.function-info {
+    flex: 1;
+    font-family: 'Courier New', monospace;
+    font-size: 13px;
+}
+.function-controls {
+    display: flex;
+    gap: 4px;
+}
+.function-controls button {
+    padding: 4px 6px;
+    border: none;
+    border-radius: 4px;
+    font-size: 11px;
+    cursor: pointer;
+}
+.toggle-btn {
+    background: #48bb78;
+    color: white;
+}
+.toggle-btn.hidden {
+    background: #a0aec0;
+}
+.delete-btn {
+    background: #e53e3e;
+    color: white;
+}
+.plot-area {
+    width: 100%;
+    background: white;
+    border-radius: 15px;
+    padding: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#plotCanvas {
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    cursor: crosshair;
+    background: white;
+    max-width: 100%;
+    height: auto;
+}
+.coordinate-info {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 6px 10px;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 12px;
+    pointer-events: none;
+}
+.footer {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    padding: 12px 15px;
+    margin-top: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+.status-info {
+    color: #4a5568;
+    font-weight: 500;
+    font-size: 13px;
+}
+.help-info details {
+    cursor: pointer;
+    margin-top: 8px;
+}
+.help-info summary {
+    color: #667eea;
+    font-weight: 600;
+    outline: none;
+    font-size: 13px;
+}
+.help-content {
+    position: fixed;
+    right: 10px;
+    left: 10px;
+    bottom: 60px;
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    width: auto;
+    z-index: 1000;
+    font-size: 13px;
+}
+.help-content ul {
+    margin-left: 15px;
+    margin-top: 6px;
+}
+.help-content li {
+    margin-bottom: 3px;
+}
+.color-picker {
+    width: 26px;
+    height: 26px;
+    border: 2px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+    background: none;
+}
+.color-picker::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+.color-picker::-webkit-color-swatch {
+    border: none;
+    border-radius: 2px;
+}
+@media (min-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+    .header {
+        padding: 20px;
+        margin-bottom: 20px;
+    }
+    .header h1 {
+        font-size: 2.2em;
+    }
+    .header p {
+        font-size: 1.1em;
+    }
+    .main-content {
+        flex-direction: row;
+        gap: 20px;
+        min-height: 600px;
+    }
+    .control-panel {
+        width: 350px;
+        padding: 20px;
+        max-height: calc(100vh - 200px);
+        overflow-y: auto;
+    }
+    .control-panel h3 {
+        font-size: 1.2em;
+        margin-bottom: 15px;
+        padding-bottom: 8px;
+    }
+    .template-buttons {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+    .plot-area {
+        flex: 1;
+        padding: 20px;
+    }
+    .footer {
+        padding: 15px 20px;
+        margin-top: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-align: left;
+    }
+    .help-content {
+        position: absolute;
+        right: 20px;
+        bottom: 70px;
+        width: 300px;
+    }
+}
+@media (min-width: 1024px) {
+    .template-buttons {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>📊 初中数学函数绘制工具</h1>
+            <p>输入函数方程，立即看到图形效果</p>
+        </header>
+
+        <div class="main-content">
+            <div class="control-panel">
+                <div class="input-section">
+                    <h3>函数输入</h3>
+                    <div class="function-input-group">
+                        <label for="functionInput">输入函数：</label>
+                        <input type="text" id="functionInput" placeholder="例如：x^2 + 2*x + 1" autocomplete="off">
+                        <button id="addFunction" class="btn btn-primary">添加函数</button>
+                    </div>
+                    <div class="error-message" id="errorMessage"></div>
+                </div>
+
+                <div class="template-section">
+                    <h3>常用模板</h3>
+                    <div class="template-buttons">
+                        <button class="template-btn" data-template="x + 1">一次函数</button>
+                        <button class="template-btn" data-template="x^2">二次函数</button>
+                        <button class="template-btn" data-template="1/x">反比例函数</button>
+                        <button class="template-btn" data-template="abs(x)">绝对值函数</button>
+                        <button class="template-btn" data-template="2*x">正比例函数</button>
+                        <button class="template-btn" data-template="5">常数函数</button>
+                    </div>
+                </div>
+
+                <div class="coordinate-section">
+                    <h3>坐标系设置</h3>
+                    <div class="range-controls">
+                        <label>X轴：<input type="number" id="xMin" value="-10" min="-100" max="0"> 到 <input type="number" id="xMax" value="10" min="0" max="100"></label>
+                        <label>Y轴：<input type="number" id="yMin" value="-10" min="-100" max="0"> 到 <input type="number" id="yMax" value="10" min="0" max="100"></label>
+                    </div>
+                    <div class="control-buttons">
+                        <label class="checkbox-label"><input type="checkbox" id="showGrid" checked>显示网格</label>
+                        <button id="resetView" class="btn btn-secondary">重置视图</button>
+                        <button id="clearAll" class="btn btn-danger">清除所有</button>
+                    </div>
+                </div>
+
+                <div class="function-list-section">
+                    <h3>当前函数</h3>
+                    <div id="functionList" class="function-list">
+                        <p class="no-functions">暂无函数，请添加函数开始绘制</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="plot-area">
+                <canvas id="plotCanvas" width="800" height="600"></canvas>
+                <div class="coordinate-info" id="coordinateInfo">坐标：(0, 0)</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <div class="status-info">
+                <span id="statusMessage">就绪 - 请输入函数开始绘制</span>
+            </div>
+            <div class="help-info">
+                <details>
+                    <summary>使用帮助</summary>
+                    <div class="help-content">
+                        <p><strong>支持的运算符：</strong></p>
+                        <ul>
+                            <li>+ - * / (基本运算)</li>
+                            <li>^ (乘方，如 x^2)</li>
+                            <li>abs(x) (绝对值)</li>
+                            <li>sqrt(x) (平方根)</li>
+                        </ul>
+                        <p><strong>函数示例：</strong></p>
+                        <ul>
+                            <li>一次函数：2*x + 3</li>
+                            <li>二次函数：x^2 - 4*x + 3</li>
+                            <li>反比例函数：6/x</li>
+                        </ul>
+                    </div>
+                </details>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+class MathParser {
+    constructor() {
+        this.position = 0;
+        this.expression = '';
+        this.tokens = [];
+    }
+    parse(expression) {
+        this.expression = expression.replace(/\s+/g, '');
+        this.position = 0;
+        this.tokens = this.tokenize();
+        if (this.tokens.length === 0) throw new Error('表达式为空');
+        const ast = this.parseExpression();
+        return (x) => this.evaluate(ast, x);
+    }
+    tokenize() {
+        const tokens = [];
+        const regex = /(\d*\.?\d+)|([a-zA-Z]+)|([+\-*/^()])|(\|)/g;
+        let match;
+        while ((match = regex.exec(this.expression)) !== null) {
+            const token = match[0];
+            if (/\d/.test(token)) tokens.push({ type: 'NUMBER', value: parseFloat(token) });
+            else if (/[a-zA-Z]/.test(token)) {
+                if (token === 'x') tokens.push({ type: 'VARIABLE', value: token });
+                else tokens.push({ type: 'FUNCTION', value: token });
+            } else if (['+', '-', '*', '/', '^'].includes(token)) tokens.push({ type: 'OPERATOR', value: token });
+            else if (token === '(') tokens.push({ type: 'LPAREN' });
+            else if (token === ')') tokens.push({ type: 'RPAREN' });
+            else if (token === '|') tokens.push({ type: 'ABS' });
+        }
+        return tokens;
+    }
+    parseExpression() { return this.parseAddSubtract(); }
+    parseAddSubtract() {
+        let left = this.parseMultiplyDivide();
+        while (this.position < this.tokens.length) {
+            const token = this.tokens[this.position];
+            if (token && token.type === 'OPERATOR' && (token.value === '+' || token.value === '-')) {
+                this.position++;
+                const right = this.parseMultiplyDivide();
+                left = { type: 'BINARY_OP', operator: token.value, left, right };
+            } else break;
+        }
+        return left;
+    }
+    parseMultiplyDivide() {
+        let left = this.parsePower();
+        while (this.position < this.tokens.length) {
+            const token = this.tokens[this.position];
+            if (token && token.type === 'OPERATOR' && (token.value === '*' || token.value === '/')) {
+                this.position++;
+                const right = this.parsePower();
+                left = { type: 'BINARY_OP', operator: token.value, left, right };
+            } else break;
+        }
+        return left;
+    }
+    parsePower() {
+        let left = this.parseUnary();
+        while (this.position < this.tokens.length) {
+            const token = this.tokens[this.position];
+            if (token && token.type === 'OPERATOR' && token.value === '^') {
+                this.position++;
+                const right = this.parseUnary();
+                left = { type: 'BINARY_OP', operator: '^', left, right };
+            } else break;
+        }
+        return left;
+    }
+    parseUnary() {
+        const token = this.tokens[this.position];
+        if (token && token.type === 'OPERATOR' && (token.value === '+' || token.value === '-')) {
+            this.position++;
+            return { type: 'UNARY_OP', operator: token.value, operand: this.parseUnary() };
+        }
+        return this.parseFactor();
+    }
+    parseFactor() {
+        const token = this.tokens[this.position];
+        if (!token) throw new Error('意外的表达式结束');
+        switch (token.type) {
+            case 'NUMBER': this.position++; return { type: 'NUMBER', value: token.value };
+            case 'VARIABLE': this.position++; return { type: 'VARIABLE', name: token.value };
+            case 'FUNCTION': return this.parseFunction();
+            case 'LPAREN': {
+                this.position++;
+                const expr = this.parseExpression();
+                if (!this.tokens[this.position] || this.tokens[this.position].type !== 'RPAREN') throw new Error('缺少右括号');
+                this.position++;
+                return expr;
+            }
+            case 'ABS': return this.parseAbsolute();
+            default: throw new Error(`意外的token: ${token.value || token.type}`);
+        }
+    }
+    parseFunction() {
+        const functionToken = this.tokens[this.position];
+        this.position++;
+        if (!this.tokens[this.position] || this.tokens[this.position].type !== 'LPAREN') throw new Error(`函数 ${functionToken.value} 后面必须跟括号`);
+        this.position++;
+        const argument = this.parseExpression();
+        if (!this.tokens[this.position] || this.tokens[this.position].type !== 'RPAREN') throw new Error('函数调用缺少右括号');
+        this.position++;
+        return { type: 'FUNCTION_CALL', name: functionToken.value, argument };
+    }
+    parseAbsolute() {
+        this.position++;
+        const expr = this.parseExpression();
+        if (!this.tokens[this.position] || this.tokens[this.position].type !== 'ABS') throw new Error('绝对值缺少右边的 |');
+        this.position++;
+        return { type: 'FUNCTION_CALL', name: 'abs', argument: expr };
+    }
+    evaluate(node, x) {
+        switch (node.type) {
+            case 'NUMBER': return node.value;
+            case 'VARIABLE': return node.name === 'x' ? x : (() => { throw new Error(`未知变量: ${node.name}`) })();
+            case 'BINARY_OP': {
+                const left = this.evaluate(node.left, x);
+                const right = this.evaluate(node.right, x);
+                switch (node.operator) {
+                    case '+': return left + right;
+                    case '-': return left - right;
+                    case '*': return left * right;
+                    case '/': return Math.abs(right) < 1e-10 ? (right > 0 ? Infinity : -Infinity) : left / right;
+                    case '^': return Math.pow(left, right);
+                    default: throw new Error(`未知运算符: ${node.operator}`);
+                }
+            }
+            case 'UNARY_OP': {
+                const operand = this.evaluate(node.operand, x);
+                return node.operator === '+' ? operand : -operand;
+            }
+            case 'FUNCTION_CALL': {
+                const arg = this.evaluate(node.argument, x);
+                return this.callFunction(node.name, arg);
+            }
+            default: throw new Error(`未知节点类型: ${node.type}`);
+        }
+    }
+    callFunction(name, arg) {
+        switch (name) {
+            case 'abs': return Math.abs(arg);
+            case 'sqrt': return arg < 0 ? NaN : Math.sqrt(arg);
+            case 'sin': return Math.sin(arg);
+            case 'cos': return Math.cos(arg);
+            case 'tan': return Math.tan(arg);
+            case 'log': return arg <= 0 ? NaN : Math.log10(arg);
+            case 'ln': return arg <= 0 ? NaN : Math.log(arg);
+            default: throw new Error(`未知函数: ${name}`);
+        }
+    }
+    static validate(expression) {
+        try {
+            const parser = new MathParser();
+            const func = parser.parse(expression);
+            func(0); func(1); func(-1);
+            return { valid: true, message: '表达式有效' };
+        } catch (error) {
+            return { valid: false, message: error.message };
+        }
+    }
+    static preprocessExpression(expression) {
+        return expression
+            .replace(/(\d)([a-zA-Z])/g, '$1*$2')
+            .replace(/\)([a-zA-Z])/g, ')*$1')
+            .replace(/(\d)\(/g, '$1*(')
+            .replace(/\)(\d)/g, ')*$1');
+    }
+}
+
+class PlotEngine {
+    constructor(canvas) {
+        this.canvas = canvas;
+        this.ctx = canvas.getContext('2d');
+        this.functions = new Map();
+        this.colors = ['#3182ce', '#e53e3e', '#38a169', '#dd6b20', '#805ad5'];
+        this.colorIndex = 0;
+        this.xMin = -10;
+        this.xMax = 10;
+        this.yMin = -10;
+        this.yMax = 10;
+        this.setupHighDPI();
+        this.setupMouseEvents();
+        this.showGrid = true;
+        this.isDragging = false;
+        this.lastMousePos = { x: 0, y: 0 };
+    }
+    setupHighDPI() {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = this.canvas.getBoundingClientRect();
+        this.canvas.width = rect.width * dpr;
+        this.canvas.height = rect.height * dpr;
+        this.ctx.scale(dpr, dpr);
+        this.canvas.style.width = rect.width + 'px';
+        this.canvas.style.height = rect.height + 'px';
+        this.width = rect.width;
+        this.height = rect.height;
+    }
+    setupMouseEvents() {
+        this.canvas.addEventListener('mousemove', (e) => {
+            const rect = this.canvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+            const worldCoord = this.screenToWorld(x, y);
+            this.updateCoordinateDisplay(worldCoord.x, worldCoord.y);
+            if (this.isDragging) {
+                const dx = x - this.lastMousePos.x;
+                const dy = y - this.lastMousePos.y;
+                this.pan(dx, dy);
+                this.lastMousePos = { x, y };
+                this.redraw();
+            }
+        });
+        this.canvas.addEventListener('mousedown', (e) => {
+            this.isDragging = true;
+            const rect = this.canvas.getBoundingClientRect();
+            this.lastMousePos = { x: e.clientX - rect.left, y: e.clientY - rect.top };
+            this.canvas.style.cursor = 'grabbing';
+        });
+        this.canvas.addEventListener('mouseup', () => { this.isDragging = false; this.canvas.style.cursor = 'crosshair'; });
+        this.canvas.addEventListener('mouseleave', () => { this.isDragging = false; this.canvas.style.cursor = 'crosshair'; });
+        this.canvas.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = this.canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+            const worldPos = this.screenToWorld(mouseX, mouseY);
+            const zoomFactor = e.deltaY > 0 ? 1.1 : 0.9;
+            this.zoom(zoomFactor, worldPos.x, worldPos.y);
+            this.redraw();
+        });
+        this.canvas.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                this.isDragging = true;
+                this.lastMousePos = { x: e.touches[0].clientX - this.canvas.getBoundingClientRect().left, y: e.touches[0].clientY - this.canvas.getBoundingClientRect().top };
+            }
+        });
+        this.canvas.addEventListener('touchmove', (e) => {
+            if (e.touches.length === 1 && this.isDragging) {
+                const rect = this.canvas.getBoundingClientRect();
+                const x = e.touches[0].clientX - rect.left;
+                const y = e.touches[0].clientY - rect.top;
+                const dx = x - this.lastMousePos.x;
+                const dy = y - this.lastMousePos.y;
+                this.pan(dx, dy);
+                this.lastMousePos = { x, y };
+                this.redraw();
+            } else if (e.touches.length === 2) {
+                e.preventDefault();
+                const dist = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+                if (this.lastTouchDist) {
+                    const zoomFactor = dist / this.lastTouchDist;
+                    const centerX = (e.touches[0].clientX + e.touches[1].clientX) / 2;
+                    const centerY = (e.touches[0].clientY + e.touches[1].clientY) / 2;
+                    const rect = this.canvas.getBoundingClientRect();
+                    const worldPos = this.screenToWorld(centerX - rect.left, centerY - rect.top);
+                    this.zoom(1 / zoomFactor, worldPos.x, worldPos.y);
+                    this.redraw();
+                }
+                this.lastTouchDist = dist;
+            }
+        });
+        this.canvas.addEventListener('touchend', () => { this.isDragging = false; this.lastTouchDist = null; });
+    }
+    screenToWorld(screenX, screenY) {
+        const x = this.xMin + (screenX / this.width) * (this.xMax - this.xMin);
+        const y = this.yMax - (screenY / this.height) * (this.yMax - this.yMin);
+        return { x, y };
+    }
+    worldToScreen(worldX, worldY) {
+        const x = ((worldX - this.xMin) / (this.xMax - this.xMin)) * this.width;
+        const y = ((this.yMax - worldY) / (this.yMax - this.yMin)) * this.height;
+        return { x, y };
+    }
+    pan(dx, dy) {
+        const worldDx = (dx / this.width) * (this.xMax - this.xMin);
+        const worldDy = -(dy / this.height) * (this.yMax - this.yMin);
+        this.xMin -= worldDx;
+        this.xMax -= worldDx;
+        this.yMin -= worldDy;
+        this.yMax -= worldDy;
+    }
+    zoom(factor, centerX, centerY) {
+        const newXRange = (this.xMax - this.xMin) * factor;
+        const newYRange = (this.yMax - this.yMin) * factor;
+        const xCenter = centerX || (this.xMin + this.xMax) / 2;
+        const yCenter = centerY || (this.yMin + this.yMax) / 2;
+        this.xMin = xCenter - newXRange / 2;
+        this.xMax = xCenter + newXRange / 2;
+        this.yMin = yCenter - newYRange / 2;
+        this.yMax = yCenter + newYRange / 2;
+    }
+    setViewRange(xMin, xMax, yMin, yMax) {
+        this.xMin = xMin;
+        this.xMax = xMax;
+        this.yMin = yMin;
+        this.yMax = yMax;
+    }
+    resetView() {
+        this.xMin = -10;
+        this.xMax = 10;
+        this.yMin = -10;
+        this.yMax = 10;
+    }
+    clear() { this.ctx.clearRect(0, 0, this.width, this.height); }
+    drawGrid() {
+        if (!this.showGrid) return;
+        this.ctx.strokeStyle = '#e2e8f0';
+        this.ctx.lineWidth = 0.5;
+        this.ctx.globalAlpha = 0.6;
+        const xRange = this.xMax - this.xMin;
+        const yRange = this.yMax - this.yMin;
+        let xStep = Math.pow(10, Math.floor(Math.log10(xRange)) - 1);
+        let yStep = Math.pow(10, Math.floor(Math.log10(yRange)) - 1);
+        if (xRange / xStep > 50) xStep *= 5;
+        else if (xRange / xStep > 20) xStep *= 2;
+        if (yRange / yStep > 50) yStep *= 5;
+        else if (yRange / yStep > 20) yStep *= 2;
+        const startX = Math.ceil(this.xMin / xStep) * xStep;
+        for (let x = startX; x <= this.xMax; x += xStep) {
+            const screenPos = this.worldToScreen(x, 0);
+            this.ctx.beginPath();
+            this.ctx.moveTo(screenPos.x, 0);
+            this.ctx.lineTo(screenPos.x, this.height);
+            this.ctx.stroke();
+        }
+        const startY = Math.ceil(this.yMin / yStep) * yStep;
+        for (let y = startY; y <= this.yMax; y += yStep) {
+            const screenPos = this.worldToScreen(0, y);
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, screenPos.y);
+            this.ctx.lineTo(this.width, screenPos.y);
+            this.ctx.stroke();
+        }
+        this.ctx.globalAlpha = 1.0;
+    }
+    drawAxes() {
+        this.ctx.strokeStyle = '#4a5568';
+        this.ctx.lineWidth = 2;
+        if (this.yMin <= 0 && this.yMax >= 0) {
+            const y0 = this.worldToScreen(0, 0).y;
+            this.ctx.beginPath();
+            this.ctx.moveTo(0, y0);
+            this.ctx.lineTo(this.width, y0);
+            this.ctx.stroke();
+        }
+        if (this.xMin <= 0 && this.xMax >= 0) {
+            const x0 = this.worldToScreen(0, 0).x;
+            this.ctx.beginPath();
+            this.ctx.moveTo(x0, 0);
+            this.ctx.lineTo(x0, this.height);
+            this.ctx.stroke();
+        }
+    }
+    drawLabels() {
+        this.ctx.fillStyle = '#4a5568';
+        this.ctx.font = '11px Arial';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'top';
+        const xRange = this.xMax - this.xMin;
+        const yRange = this.yMax - this.yMin;
+        let xStep = Math.pow(10, Math.floor(Math.log10(xRange)) - 1);
+        let yStep = Math.pow(10, Math.floor(Math.log10(yRange)) - 1);
+        if (xRange / xStep > 20) xStep *= 5;
+        else if (xRange / xStep > 10) xStep *= 2;
+        if (yRange / yStep > 20) yStep *= 5;
+        else if (yRange / yStep > 10) yStep *= 2;
+        if (this.yMin <= 0 && this.yMax >= 0) {
+            const y0 = this.worldToScreen(0, 0).y;
+            const startX = Math.ceil(this.xMin / xStep) * xStep;
+            for (let x = startX; x <= this.xMax; x += xStep) {
+                if (Math.abs(x) < 1e-10) continue;
+                const screenPos = this.worldToScreen(x, 0);
+                this.ctx.fillText(x.toFixed(1), screenPos.x, y0 + 5);
+            }
+        }
+        if (this.xMin <= 0 && this.xMax >= 0) {
+            const x0 = this.worldToScreen(0, 0).x;
+            const startY = Math.ceil(this.yMin / yStep) * yStep;
+            this.ctx.textAlign = 'right';
+            this.ctx.textBaseline = 'middle';
+            for (let y = startY; y <= this.yMax; y += yStep) {
+                if (Math.abs(y) < 1e-10) continue;
+                const screenPos = this.worldToScreen(0, y);
+                this.ctx.fillText(y.toFixed(1), x0 - 5, screenPos.y);
+            }
+        }
+        if (this.xMin <= 0 && this.xMax >= 0 && this.yMin <= 0 && this.yMax >= 0) {
+            const origin = this.worldToScreen(0, 0);
+            this.ctx.textAlign = 'right';
+            this.ctx.textBaseline = 'top';
+            this.ctx.fillText('O', origin.x - 5, origin.y + 5);
+        }
+    }
+    addFunction(id, expression, func) {
+        const color = this.colors[this.colorIndex % this.colors.length];
+        this.colorIndex++;
+        this.functions.set(id, { expression, func, color, visible: true });
+    }
+    removeFunction(id) { this.functions.delete(id); }
+    toggleFunction(id) {
+        if (this.functions.has(id)) {
+            const func = this.functions.get(id);
+            func.visible = !func.visible;
+        }
+    }
+    updateFunctionColor(id, color) {
+        if (this.functions.has(id)) {
+            const func = this.functions.get(id);
+            func.color = color;
+        }
+    }
+    clearAllFunctions() { this.functions.clear(); this.colorIndex = 0; }
+    drawFunction(functionData) {
+        if (!functionData.visible) return;
+        this.ctx.strokeStyle = functionData.color;
+        this.ctx.lineWidth = 2.5;
+        this.ctx.lineCap = 'round';
+        this.ctx.lineJoin = 'round';
+        const step = (this.xMax - this.xMin) / (this.width * 2);
+        let isDrawing = false, prevY = null;
+        this.ctx.beginPath();
+        for (let x = this.xMin; x <= this.xMax; x += step) {
+            try {
+                const y = functionData.func(x);
+                if (isNaN(y) || !isFinite(y)) { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; continue; }
+                if (y < this.yMin - (this.yMax - this.yMin) * 0.1 || y > this.yMax + (this.yMax - this.yMin) * 0.1) { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; continue; }
+                if (prevY !== null && prevY * y < 0) { const root = this.bisection(functionData.func, x - step, x); if (root !== null) this.drawAxisIntersection(root, 0, 'x'); }
+                const screenPos = this.worldToScreen(x, y);
+                if (!isDrawing) { this.ctx.beginPath(); this.ctx.moveTo(screenPos.x, screenPos.y); isDrawing = true; }
+                else this.ctx.lineTo(screenPos.x, screenPos.y);
+                prevY = y;
+            } catch { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; }
+        }
+        if (isDrawing) this.ctx.stroke();
+        if (this.xMin <= 0 && this.xMax >= 0) { try { const y = functionData.func(0); if (isFinite(y) && y >= this.yMin && y <= this.yMax) this.drawAxisIntersection(0, y, 'y'); } catch {} }
+    }
+    drawAxisIntersection(x, y, axis) {
+        const screenPos = this.worldToScreen(x, y);
+        this.ctx.beginPath();
+        this.ctx.arc(screenPos.x, screenPos.y, 6, 0, Math.PI * 2);
+        this.ctx.fillStyle = '#1a202c';
+        this.ctx.fill();
+        this.ctx.strokeStyle = '#48bb78';
+        this.ctx.lineWidth = 2;
+        this.ctx.stroke();
+        this.ctx.beginPath();
+        this.ctx.arc(screenPos.x, screenPos.y, 3, 0, Math.PI * 2);
+        this.ctx.fillStyle = '#48bb78';
+        this.ctx.fill();
+        const label = axis === 'x' ? `(${x.toFixed(2)}, 0)` : `(0, ${y.toFixed(2)})`;
+        this.ctx.font = 'bold 11px Arial';
+        this.ctx.textAlign = 'left';
+        this.ctx.textBaseline = 'bottom';
+        let labelX = screenPos.x + 10, labelY = screenPos.y - 6;
+        if (axis === 'y') { labelX = screenPos.x + 10; labelY = screenPos.y - 6; }
+        this.ctx.strokeStyle = 'white';
+        this.ctx.lineWidth = 3;
+        this.ctx.strokeText(label, labelX, labelY);
+        this.ctx.fillStyle = '#48bb78';
+        this.ctx.fillText(label, labelX, labelY);
+    }
+    drawAllFunctions() { this.functions.forEach((fd) => this.drawFunction(fd)); }
+    redraw() { this.clear(); this.drawGrid(); this.drawAxes(); this.drawLabels(); this.drawAllFunctions(); this.drawIntersectionPoints(); }
+    updateCoordinateDisplay(x, y) {
+        const el = document.getElementById('coordinateInfo');
+        if (el) el.textContent = `坐标：(${x.toFixed(2)}, ${y.toFixed(2)})`;
+    }
+    setGridVisible(v) { this.showGrid = v; }
+    getFunctions() { return this.functions; }
+    exportAsImage() { return this.canvas.toDataURL('image/png'); }
+    findIntersectionPoints() {
+        const intersections = [];
+        const funcs = Array.from(this.functions.values()).filter(f => f.visible);
+        if (funcs.length < 2) return intersections;
+        for (let i = 0; i < funcs.length; i++) {
+            for (let j = i + 1; j < funcs.length; j++) {
+                const f1 = funcs[i], f2 = funcs[j];
+                const diff = (x) => { try { return f1.func(x) - f2.func(x); } catch { return NaN; } };
+                const step = (this.xMax - this.xMin) / 200;
+                let x = this.xMin;
+                while (x < this.xMax) {
+                    try {
+                        const y1 = f1.func(x), y2 = f2.func(x);
+                        const y1Next = f1.func(x + step), y2Next = f2.func(x + step);
+                        if (isFinite(y1) && isFinite(y2)) {
+                            const diff1 = y1 - y2, diff2 = y1Next - y2Next;
+                            if (Math.abs(diff1) < 0.01 && isFinite(y1)) {
+                                const root = this.bisection(diff, x, x + step);
+                                if (root !== null) { try { const y = f1.func(root); if (isFinite(y)) intersections.push({ x: root, y: y }); } catch {} }
+                            }
+                            if (diff1 * diff2 < 0) {
+                                const root = this.bisection(diff, x, x + step);
+                                if (root !== null) { try { const y = f1.func(root); if (isFinite(y)) intersections.push({ x: root, y: y }); } catch {} }
+                            }
+                        }
+                    } catch {}
+                    x += step;
+                }
+            }
+        }
+        return this.removeDuplicateIntersections(intersections);
+    }
+    bisection(f, a, b, tolerance = 1e-6, maxIterations = 50) {
+        let fa = f(a), fb = f(b);
+        if (fa * fb > 0) return null;
+        for (let i = 0; i < maxIterations; i++) {
+            const mid = (a + b) / 2, fmid = f(mid);
+            if (Math.abs(fmid) < tolerance) return mid;
+            if (fa * fmid < 0) { b = mid; fb = fmid; } else { a = mid; fa = fmid; }
+        }
+        return (a + b) / 2;
+    }
+    removeDuplicateIntersections(intersections) {
+        const filtered = [], minDist = 0.1;
+        for (const pt of intersections) {
+            let isDuplicate = false;
+            for (const existing of filtered) { if (Math.sqrt(Math.pow(pt.x - existing.x, 2) + Math.pow(pt.y - existing.y, 2)) < minDist) { isDuplicate = true; break; } }
+            if (!isDuplicate) filtered.push(pt);
+        }
+        return filtered;
+    }
+    drawIntersectionPoints() {
+        const intersections = this.findIntersectionPoints();
+        for (const pt of intersections) {
+            const screenPos = this.worldToScreen(pt.x, pt.y);
+            this.ctx.beginPath();
+            this.ctx.arc(screenPos.x, screenPos.y, 8, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#1a202c';
+            this.ctx.fill();
+            this.ctx.strokeStyle = '#ffd700';
+            this.ctx.lineWidth = 2;
+            this.ctx.stroke();
+            this.ctx.beginPath();
+            this.ctx.arc(screenPos.x, screenPos.y, 4, 0, Math.PI * 2);
+            this.ctx.fillStyle = '#ffd700';
+            this.ctx.fill();
+            const label = `(${pt.x.toFixed(2)}, ${pt.y.toFixed(2)})`;
+            this.ctx.font = 'bold 11px Arial';
+            this.ctx.textAlign = 'left';
+            this.ctx.textBaseline = 'bottom';
+            this.ctx.strokeStyle = 'white';
+            this.ctx.lineWidth = 3;
+            this.ctx.strokeText(label, screenPos.x + 12, screenPos.y - 8);
+            this.ctx.fillText(label, screenPos.x + 12, screenPos.y - 8);
+        }
+    }
+    getIntersectionPoints() { return this.findIntersectionPoints(); }
+}
+
+class FunctionPlotterApp {
+    constructor() {
+        this.plotEngine = null;
+        this.functionCounter = 0;
+        this.currentFunctions = new Map();
+        this.init();
+    }
+    init() {
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => this.setupApplication());
+        else this.setupApplication();
+    }
+    setupApplication() {
+        const canvas = document.getElementById('plotCanvas');
+        if (!canvas) return;
+        this.plotEngine = new PlotEngine(canvas);
+        this.bindEventListeners();
+        this.plotEngine.redraw();
+        this.updateStatus('就绪 - 请输入函数开始绘制');
+    }
+    bindEventListeners() {
+        const functionInput = document.getElementById('functionInput');
+        const addFunctionBtn = document.getElementById('addFunction');
+        if (functionInput && addFunctionBtn) {
+            functionInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') this.addFunction(); });
+            functionInput.addEventListener('input', (e) => this.validateInput(e.target.value));
+            addFunctionBtn.addEventListener('click', () => this.addFunction());
+        }
+        document.querySelectorAll('.template-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.useTemplate(e.target.getAttribute('data-template')));
+        });
+        ['xMin', 'xMax', 'yMin', 'yMax'].forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.addEventListener('change', () => this.updateViewRange());
+        });
+        const showGridCheckbox = document.getElementById('showGrid');
+        if (showGridCheckbox) showGridCheckbox.addEventListener('change', (e) => { this.plotEngine.setGridVisible(e.target.checked); this.plotEngine.redraw(); });
+        const resetViewBtn = document.getElementById('resetView');
+        if (resetViewBtn) resetViewBtn.addEventListener('click', () => this.resetView());
+        const clearAllBtn = document.getElementById('clearAll');
+        if (clearAllBtn) clearAllBtn.addEventListener('click', () => this.clearAllFunctions());
+        window.addEventListener('resize', () => { setTimeout(() => { this.plotEngine.setupHighDPI(); this.plotEngine.redraw(); }, 100); });
+    }
+    validateInput(expression) {
+        const errorElement = document.getElementById('errorMessage');
+        if (!errorElement) return;
+        if (!expression.trim()) { this.hideError(); return; }
+        const preprocessed = MathParser.preprocessExpression(expression);
+        const validation = MathParser.validate(preprocessed);
+        if (validation.valid) this.hideError();
+        else this.showError(validation.message);
+    }
+    showError(message) {
+        const el = document.getElementById('errorMessage');
+        if (el) { el.textContent = message; el.classList.add('show'); }
+    }
+    hideError() {
+        const el = document.getElementById('errorMessage');
+        if (el) el.classList.remove('show');
+    }
+    addFunction() {
+        const input = document.getElementById('functionInput');
+        if (!input) return;
+        const expression = input.value.trim();
+        if (!expression) { this.showError('请输入函数表达式'); return; }
+        try {
+            const preprocessed = MathParser.preprocessExpression(expression);
+            const parser = new MathParser();
+            const func = parser.parse(preprocessed);
+            const id = `func_${++this.functionCounter}`;
+            this.plotEngine.addFunction(id, expression, func);
+            this.addFunctionToList(id, expression);
+            this.plotEngine.redraw();
+            input.value = '';
+            this.hideError();
+            this.updateStatus(`成功添加函数：y = ${expression}`);
+        } catch (error) { this.showError(error.message); }
+    }
+    useTemplate(template) {
+        const input = document.getElementById('functionInput');
+        if (input) { input.value = template; input.focus(); this.validateInput(template); }
+    }
+    addFunctionToList(id, expression) {
+        const list = document.getElementById('functionList');
+        if (!list) return;
+        const noFuncMsg = list.querySelector('.no-functions');
+        if (noFuncMsg) noFuncMsg.remove();
+        const fd = this.plotEngine.getFunctions().get(id);
+        const color = fd ? fd.color : '#3182ce';
+        const item = document.createElement('div');
+        item.className = 'function-item';
+        item.setAttribute('data-id', id);
+        item.innerHTML = `
+            <div class="function-info"><span>y = ${this.formatExpression(expression)}</span></div>
+            <div class="function-controls">
+                <button class="toggle-btn" onclick="app.toggleFunction('${id}')" title="显示/隐藏">👁</button>
+                <input type="color" class="color-picker" value="${color}" onchange="app.changeFunctionColor('${id}', this.value)" title="选择颜色">
+                <button class="delete-btn" onclick="app.removeFunction('${id}')" title="删除">🗑</button>
+            </div>
+        `;
+        list.appendChild(item);
+    }
+    formatExpression(expr) {
+        return expr.replace(/\*/g, '×').replace(/\^2/g, '²').replace(/\^3/g, '³').replace(/abs\(/g, '|').replace(/sqrt\(/g, '√');
+    }
+    toggleFunction(id) {
+        this.plotEngine.toggleFunction(id);
+        const item = document.querySelector(`[data-id="${id}"]`);
+        const btn = item?.querySelector('.toggle-btn');
+        if (btn) {
+            const fd = this.plotEngine.getFunctions().get(id);
+            if (fd?.visible) { btn.classList.remove('hidden'); btn.textContent = '👁'; btn.title = '隐藏'; }
+            else { btn.classList.add('hidden'); btn.textContent = '👁‍🗨'; btn.title = '显示'; }
+        }
+        this.plotEngine.redraw();
+    }
+    changeFunctionColor(id, color) {
+        this.plotEngine.updateFunctionColor(id, color);
+        this.plotEngine.redraw();
+        this.updateStatus('函数颜色已更新');
+    }
+    removeFunction(id) {
+        this.plotEngine.removeFunction(id);
+        const item = document.querySelector(`[data-id="${id}"]`);
+        if (item) item.remove();
+        const list = document.getElementById('functionList');
+        if (list && list.children.length === 0) {
+            const msg = document.createElement('p');
+            msg.className = 'no-functions';
+            msg.textContent = '暂无函数，请添加函数开始绘制';
+            list.appendChild(msg);
+        }
+        this.plotEngine.redraw();
+        this.updateStatus('函数已删除');
+    }
+    updateViewRange() {
+        const xMin = parseFloat(document.getElementById('xMin')?.value) || -10;
+        const xMax = parseFloat(document.getElementById('xMax')?.value) || 10;
+        const yMin = parseFloat(document.getElementById('yMin')?.value) || -10;
+        const yMax = parseFloat(document.getElementById('yMax')?.value) || 10;
+        if (xMin >= xMax) { this.showError('X轴最小值必须小于最大值'); return; }
+        if (yMin >= yMax) { this.showError('Y轴最小值必须小于最大值'); return; }
+        this.plotEngine.setViewRange(xMin, xMax, yMin, yMax);
+        this.plotEngine.redraw();
+        this.hideError();
+    }
+    resetView() {
+        this.plotEngine.resetView();
+        this.plotEngine.redraw();
+        document.getElementById('xMin').value = -10;
+        document.getElementById('xMax').value = 10;
+        document.getElementById('yMin').value = -10;
+        document.getElementById('yMax').value = 10;
+        this.updateStatus('视图已重置');
+    }
+    clearAllFunctions() {
+        if (this.plotEngine.getFunctions().size === 0) { this.updateStatus('没有需要清除的函数'); return; }
+        if (confirm('确定要清除所有函数吗？')) {
+            this.plotEngine.clearAllFunctions();
+            const list = document.getElementById('functionList');
+            if (list) list.innerHTML = '<p class="no-functions">暂无函数，请添加函数开始绘制</p>';
+            this.plotEngine.redraw();
+            this.updateStatus('所有函数已清除');
+        }
+    }
+    updateStatus(message) {
+        const el = document.getElementById('statusMessage');
+        if (el) el.textContent = message;
+        setTimeout(() => { if (el && el.textContent === message) el.textContent = '就绪 - 请输入函数开始绘制'; }, 3000);
+    }
+}
+
+let app;
+document.addEventListener('DOMContentLoaded', () => { app = new FunctionPlotterApp(); });
+window.app = app;
+    </script>
+</body>
+</html>

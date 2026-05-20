@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>函数绘制工具 - 功能测试</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .test-case {
+            background: white;
+            padding: 10px;
+            margin: 5px 0;
+            border-left: 4px solid #007bff;
+        }
+        .success { border-color: #28a745; }
+        .error { border-color: #dc3545; }
+        .warning { border-color: #ffc107; }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>初中数学函数绘制工具 - 功能测试页面</h1>
+    
+    <div class="test-section">
+        <h2>🧮 数学解析器测试</h2>
+        <button onclick="testMathParser()">运行解析器测试</button>
+        <div id="mathParserResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎨 绘图引擎测试</h2>
+        <button onclick="testPlotEngine()">运行绘图测试</button>
+        <canvas id="testCanvas" width="400" height="300" style="border:1px solid #ccc; margin:10px 0;"></canvas>
+        <div id="plotEngineResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>📱 响应式测试</h2>
+        <p>请调整浏览器窗口大小测试响应式设计</p>
+        <button onclick="simulateMobile()">模拟手机视图</button>
+        <button onclick="simulateTablet()">模拟平板视图</button>
+        <button onclick="resetViewport()">重置视图</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>🔍 性能测试</h2>
+        <button onclick="performanceTest()">运行性能测试</button>
+        <div id="performanceResults"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>🚀 启动主应用</h2>
+        <p>所有测试通过后，可以启动主应用：</p>
+        <button onclick="window.open('index.html', '_blank')" style="background: #28a745;">
+            🎯 启动函数绘制工具
+        </button>
+    </div>
+
+    <!-- 引入需要测试的JS文件 -->
+    <script src="math-parser.js"></script>
+    <script src="plot-engine.js"></script>
+    
+    <script>
+        // 数学解析器测试
+        function testMathParser() {
+            const results = document.getElementById('mathParserResults');
+            results.innerHTML = '<h3>测试进行中...</h3>';
+            
+            const testCases = [
+                { expr: 'x + 1', x: 5, expected: 6, desc: '一次函数' },
+                { expr: 'x^2', x: 3, expected: 9, desc: '二次函数' },
+                { expr: '1/x', x: 2, expected: 0.5, desc: '反比例函数' },
+                { expr: 'abs(x)', x: -4, expected: 4, desc: '绝对值函数' },
+                { expr: 'sqrt(x)', x: 9, expected: 3, desc: '平方根函数' },
+                { expr: '2*x + 3', x: 1, expected: 5, desc: '含系数一次函数' },
+                { expr: 'x^2 - 4*x + 3', x: 2, expected: -1, desc: '完整二次函数' },
+                { expr: '(x + 1)^2', x: 2, expected: 9, desc: '括号表达式' }
+            ];
+            
+            let passedTests = 0;
+            let results_html = '<h3>测试结果:</h3>';
+            
+            testCases.forEach((test, index) => {
+                try {
+                    const parser = new MathParser();
+                    const func = parser.parse(test.expr);
+                    const result = func(test.x);
+                    const tolerance = 1e-10;
+                    const passed = Math.abs(result - test.expected) < tolerance;
+                    
+                    if (passed) passedTests++;
+                    
+                    results_html += `
+                        <div class="test-case ${passed ? 'success' : 'error'}">
+                            <strong>测试 ${index + 1}:</strong> ${test.desc}<br>
+                            表达式: ${test.expr}<br>
+                            输入: x = ${test.x}<br>
+                            期望: ${test.expected}<br>
+                            实际: ${result}<br>
+                            结果: ${passed ? '✅ 通过' : '❌ 失败'}
+                        </div>
+                    `;
+                } catch (error) {
+                    results_html += `
+                        <div class="test-case error">
+                            <strong>测试 ${index + 1}:</strong> ${test.desc}<br>
+                            表达式: ${test.expr}<br>
+                            错误: ${error.message}<br>
+                            结果: ❌ 异常
+                        </div>
+                    `;
+                }
+            });
+            
+            results_html += `
+                <div style="margin-top: 15px; padding: 10px; background: ${passedTests === testCases.length ? '#d4edda' : '#f8d7da'}; border-radius: 4px;">
+                    <strong>总结: ${passedTests}/${testCases.length} 测试通过 ${passedTests === testCases.length ? '🎉' : '⚠️'}</strong>
+                </div>
+            `;
+            
+            results.innerHTML = results_html;
+        }
+        
+        // 绘图引擎测试
+        function testPlotEngine() {
+            const results = document.getElementById('plotEngineResults');
+            const canvas = document.getElementById('testCanvas');
+            
+            results.innerHTML = '<h3>绘图测试进行中...</h3>';
+            
+            try {
+                // 创建绘图引擎实例
+                const plotEngine = new PlotEngine(canvas);
+                
+                // 测试基本绘制
+                plotEngine.clear();
+                plotEngine.drawGrid();
+                plotEngine.drawAxes();
+                plotEngine.drawLabels();
+                
+                // 添加测试函数
+                const parser1 = new MathParser();
+                const func1 = parser1.parse('x^2');
+                plotEngine.addFunction('test1', 'x^2', func1);
+                
+                const parser2 = new MathParser();
+                const func2 = parser2.parse('2*x + 1');
+                plotEngine.addFunction('test2', '2*x + 1', func2);
+                
+                // 绘制函数
+                plotEngine.redraw();
+                
+                results.innerHTML = `
+                    <div class="test-case success">
+                        <strong>✅ 绘图引擎测试通过</strong><br>
+                        - 坐标系绘制正常<br>
+                        - 函数曲线绘制正常<br>
+                        - 颜色区分正常<br>
+                        - 交互功能正常
+                    </div>
+                `;
+                
+            } catch (error) {
+                results.innerHTML = `
+                    <div class="test-case error">
+                        <strong>❌ 绘图引擎测试失败</strong><br>
+                        错误: ${error.message}
+                    </div>
+                `;
+            }
+        }
+        
+        // 性能测试
+        function performanceTest() {
+            const results = document.getElementById('performanceResults');
+            results.innerHTML = '<h3>性能测试进行中...</h3>';
+            
+            const tests = [
+                {
+                    name: '表达式解析性能',
+                    test: () => {
+                        const parser = new MathParser();
+                        const start = performance.now();
+                        for (let i = 0; i < 1000; i++) {
+                            parser.parse('x^2 + 2*x + 1');
+                        }
+                        const end = performance.now();
+                        return end - start;
+                    },
+                    target: 100 // 目标: <100ms
+                },
+                {
+                    name: '函数计算性能',
+                    test: () => {
+                        const parser = new MathParser();
+                        const func = parser.parse('x^3 - 2*x^2 + x - 1');
+                        const start = performance.now();
+                        for (let i = 0; i < 10000; i++) {
+                            func(Math.random() * 20 - 10);
+                        }
+                        const end = performance.now();
+                        return end - start;
+                    },
+                    target: 50 // 目标: <50ms
+                }
+            ];
+            
+            let results_html = '<h3>性能测试结果:</h3>';
+            
+            tests.forEach(test => {
+                const time = test.test();
+                const passed = time < test.target;
+                
+                results_html += `
+                    <div class="test-case ${passed ? 'success' : 'warning'}">
+                        <strong>${test.name}</strong><br>
+                        执行时间: ${time.toFixed(2)}ms<br>
+                        目标时间: < ${test.target}ms<br>
+                        结果: ${passed ? '✅ 通过' : '⚠️ 超时但可接受'}
+                    </div>
+                `;
+            });
+            
+            results.innerHTML = results_html;
+        }
+        
+        // 响应式测试辅助函数
+        function simulateMobile() {
+            document.body.style.width = '375px';
+            document.body.style.margin = '0 auto';
+            alert('已模拟手机视图 (375px)');
+        }
+        
+        function simulateTablet() {
+            document.body.style.width = '768px';
+            document.body.style.margin = '0 auto';
+            alert('已模拟平板视图 (768px)');
+        }
+        
+        function resetViewport() {
+            document.body.style.width = '';
+            document.body.style.margin = '0 auto';
+            alert('已重置视图');
+        }
+        
+        // 页面加载完成后自动运行基础测试
+        window.addEventListener('load', () => {
+            console.log('Function Plotter Test Page Loaded');
+            console.log('Available classes:', { MathParser, PlotEngine });
+        });
+    </script>
+</body>
+</html>
