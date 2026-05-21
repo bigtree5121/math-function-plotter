@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>数学函数绘图工具 - 用户手册</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', 'PingFang SC', Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        .header p {
+            opacity: 0.9;
+            font-size: 16px;
+        }
+        .content {
+            padding: 30px;
+        }
+        .section {
+            margin-bottom: 35px;
+        }
+        .section h2 {
+            color: #4a5568;
+            font-size: 22px;
+            margin-bottom: 20px;
+            padding-left: 15px;
+            border-left: 4px solid #667eea;
+        }
+        .section h3 {
+            color: #555;
+            font-size: 18px;
+            margin: 18px 0 12px;
+        }
+        .step {
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+        .step-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 32px;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 14px;
+        }
+        .feature-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        .feature-card {
+            flex: 1;
+            min-width: 250px;
+            background: #f7fafc;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        .feature-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 12px;
+        }
+        .code-box {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin: 10px 0;
+            overflow-x: auto;
+        }
+        .tip {
+            background: #ebf8ff;
+            border-left: 4px solid #3182ce;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+        }
+        .warning {
+            background: #fffaf0;
+            border-left: 4px solid #e6a34a;
+            padding: 12px 15px;
+            margin: 15px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 14px;
+        }
+        .example-list {
+            list-style: none;
+            padding-left: 0;
+        }
+        .example-list li {
+            padding: 10px 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .example-list li:last-child {
+            border-bottom: none;
+        }
+        .function-name {
+            font-family: 'Courier New', monospace;
+            background: #f7fafc;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-right: 10px;
+        }
+        .btn {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+        .btn:hover {
+            background: #5a67d8;
+        }
+        .screenshot {
+            width: 100%;
+            max-width: 600px;
+            border-radius: 10px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            margin: 15px auto;
+            display: block;
+        }
+        .footer {
+            background: #f7fafc;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>📊 数学函数绘图工具</h1>
+            <p>轻松绘制各种数学函数图像，支持多种函数类型</p>
+        </div>
+
+        <div class="content">
+            <div class="section">
+                <h2>🎯 工具简介</h2>
+                <p>这是一个强大的数学函数绘图工具，可以帮助你：</p>
+                <ul>
+                    <li>快速绘制一次函数、二次函数、反比例函数等常见函数</li>
+                    <li>自定义坐标系范围，调整观察视角</li>
+                    <li>添加多个函数进行对比分析</li>
+                    <li>查看函数与坐标轴的交点</li>
+                </ul>
+                <img src="https://neeko-copilot.bytedance.net/api/text2image?prompt=mathematical%20function%20graph%20plotting%20tool%20interface%20with%20parabola%20and%20straight%20line%20on%20coordinate%20grid%20modern%20UI%20design&image_size=landscape_16_9" alt="工具界面预览" class="screenshot">
+            </div>
+
+            <div class="section">
+                <h2>🚀 快速开始</h2>
+                
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <strong>输入函数表达式</strong>
+                    <p>在左侧"输入函数"框中输入数学表达式，例如：<code class="function-name">x^2</code>、<code class="function-name">2*x + 3</code></p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <strong>点击添加函数</strong>
+                    <p>点击蓝色的"添加函数"按钮，函数图像将自动绘制在右侧坐标系中</p>
+                </div>
+
+                <div class="step">
+                    <span class="step-number">3</span>
+                    <strong>调整视图（可选）</strong>
+                    <p>通过拖动滑块调整X轴和Y轴的显示范围，或点击"重置视图"恢复默认设置</p>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📝 支持的函数语法</h2>
+                
+                <h3>基本运算符</h3>
+                <div class="code-box">
++  加法       x + 3<br>
+-  减法       x - 5<br>
+*  乘法       2 * x<br>
+/  除法       x / 2<br>
+^  幂运算     x ^ 2  (表示x的平方)<br>
+</div>
+
+                <h3>常用函数</h3>
+                <ul class="example-list">
+                    <li><span class="function-name">sin(x)</span> - 正弦函数</li>
+                    <li><span class="function-name">cos(x)</span> - 余弦函数</li>
+                    <li><span class="function-name">tan(x)</span> - 正切函数</li>
+                    <li><span class="function-name">sqrt(x)</span> - 平方根</li>
+                    <li><span class="function-name">abs(x)</span> - 绝对值</li>
+                    <li><span class="function-name">log(x)</span> - 常用对数（以10为底）</li>
+                    <li><span class="function-name">ln(x)</span> - 自然对数（以e为底）</li>
+                </ul>
+
+                <div class="tip">
+                    💡 <strong>提示：</strong>变量必须使用小写字母 <code>x</code>，不支持其他变量名
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>🎨 常用模板</h2>
+                <p>点击以下模板按钮可以快速添加常用函数：</p>
+                
+                <div class="feature-box">
+                    <div class="feature-card">
+                        <div class="feature-icon">📐</div>
+                        <strong>一次函数</strong>
+                        <p>y = 2x + 1</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔷</div>
+                        <strong>二次函数</strong>
+                        <p>y = x²</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📈</div>
+                        <strong>反比例函数</strong>
+                        <p>y = 1/x</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">⏚</div>
+                        <strong>绝对值函数</strong>
+                        <p>y = |x|</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">↗️</div>
+                        <strong>正比例函数</strong>
+                        <p>y = 2x</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">➡️</div>
+                        <strong>常数函数</strong>
+                        <p>y = 3</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>⚙️ 坐标系设置</h2>
+                
+                <div class="feature-box">
+                    <div class="feature-card">
+                        <div class="feature-icon">🔲</div>
+                        <strong>X轴范围</strong>
+                        <p>调整水平方向的显示范围</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔳</div>
+                        <strong>Y轴范围</strong>
+                        <p>调整垂直方向的显示范围</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📐</div>
+                        <strong>显示网格</strong>
+                        <p>开启/关闭背景网格线</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🔄</div>
+                        <strong>重置视图</strong>
+                        <p>恢复默认坐标系设置</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🗑️</div>
+                        <strong>清除所有</strong>
+                        <p>删除所有已添加的函数</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>💡 使用技巧</h2>
+                
+                <div class="tip">
+                    <strong>1. 输入负号开头的函数</strong><br>
+                    直接输入 <code>-x^2</code> 即可绘制向下开口的抛物线
+                </div>
+
+                <div class="tip">
+                    <strong>2. 乘法符号不能省略</strong><br>
+                    错误：<code>2x</code> → 正确：<code>2*x</code>
+                </div>
+
+                <div class="tip">
+                    <strong>3. 添加多个函数对比</strong><br>
+                    可以同时添加多个函数，它们会以不同颜色显示
+                </div>
+
+                <div class="tip">
+                    <strong>4. 查看交点坐标</strong><br>
+                    将鼠标悬停在函数与坐标轴的交点上，可以看到精确坐标
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>❌ 常见错误</h2>
+                
+                <div class="warning">
+                    <strong>错误：意外的token</strong><br>
+                    原因：表达式格式不正确，检查是否遗漏运算符或使用了非法字符
+                </div>
+
+                <div class="warning">
+                    <strong>错误：图像不显示</strong><br>
+                    原因：函数值超出当前坐标系范围，尝试调整X轴和Y轴的范围
+                </div>
+
+                <div class="warning">
+                    <strong>错误：NaN</strong><br>
+                    原因：函数在某些点无定义（如1/x在x=0处），这是正常现象
+                </div>
+            </div>
+
+            <div class="section">
+                <h2>📊 示例函数</h2>
+                <p>尝试以下示例来体验工具功能：</p>
+                <ul class="example-list">
+                    <li><span class="function-name">x^2</span> - 开口向上的抛物线</li>
+                    <li><span class="function-name">-x^2 + 4</span> - 开口向下的抛物线，顶点在(0,4)</li>
+                    <li><span class="function-name">sin(x)</span> - 正弦曲线</li>
+                    <li><span class="function-name">1/x</span> - 反比例函数（双曲线）</li>
+                    <li><span class="function-name">abs(x-2) + 1</span> - 顶点在(2,1)的V形图</li>
+                </ul>
+            </div>
+
+            <div class="section" style="text-align: center;">
+                <a href="mobile.html" class="btn">🚀 立即体验工具</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>数学函数绘图工具 - 让数学可视化变得简单</p>
+        </div>
+    </div>
+</body>
+</html>

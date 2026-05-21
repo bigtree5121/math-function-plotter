@@ -523,35 +523,61 @@ class MathParser {
         return left;
     }
     parseMultiplyDivide() {
-        let left = this.parsePower();
+        let left = this.parseUnary();
         while (this.position < this.tokens.length) {
             const token = this.tokens[this.position];
             if (token && token.type === 'OPERATOR' && (token.value === '*' || token.value === '/')) {
                 this.position++;
-                const right = this.parsePower();
+                const right = this.parseUnary();
                 left = { type: 'BINARY_OP', operator: token.value, left, right };
             } else break;
         }
         return left;
     }
     parsePower() {
-        let left = this.parseUnary();
+        let left = this.parseFactor();
+
         while (this.position < this.tokens.length) {
             const token = this.tokens[this.position];
+
             if (token && token.type === 'OPERATOR' && token.value === '^') {
                 this.position++;
+
                 const right = this.parseUnary();
-                left = { type: 'BINARY_OP', operator: '^', left, right };
-            } else break;
+
+                left = {
+                    type: 'BINARY_OP',
+                    operator: '^',
+                    left,
+                    right
+                };
+            } else {
+                break;
+            }
         }
+
         return left;
     }
     parseUnary() {
         const token = this.tokens[this.position];
-        if (token && token.type === 'OPERATOR' && (token.value === '+' || token.value === '-')) {
+
+        if (
+            token &&
+            token.type === 'OPERATOR' &&
+            (token.value === '+' || token.value === '-')
+        ) {
             this.position++;
-            return { type: 'UNARY_OP', operator: token.value, operand: this.parseUnary() };
+
+            return {
+                type: 'UNARY_OP',
+                operator: token.value,
+                operand: this.parsePower()
+            };
         }
+
+        return this.parsePower();
+    }
+    parsePowerPrimary() {
         return this.parseFactor();
     }
     parseFactor() {
@@ -665,16 +691,31 @@ class PlotEngine {
         this.lastMousePos = { x: 0, y: 0 };
     }
     setupHighDPI() {
-        const dpr = window.devicePixelRatio || 1;
-        const rect = this.canvas.getBoundingClientRect();
-        this.canvas.width = rect.width * dpr;
-        this.canvas.height = rect.height * dpr;
-        this.ctx.scale(dpr, dpr);
-        this.canvas.style.width = rect.width + 'px';
-        this.canvas.style.height = rect.height + 'px';
-        this.width = rect.width;
-        this.height = rect.height;
+    const dpr = window.devicePixelRatio || 1;
+
+    let rect = this.canvas.getBoundingClientRect();
+
+    // 防止初始化时宽高为0
+    let width = rect.width;
+    let height = rect.height;
+
+    if (width === 0 || height === 0) {
+        width = 800;
+        height = 600;
     }
+
+    this.canvas.width = width * dpr;
+    this.canvas.height = height * dpr;
+
+    this.ctx.setTransform(1, 0, 0, 1, 0, 0);
+    this.ctx.scale(dpr, dpr);
+
+    this.canvas.style.width = width + 'px';
+    this.canvas.style.height = height + 'px';
+
+    this.width = width;
+    this.height = height;
+}
     setupMouseEvents() {
         this.canvas.addEventListener('mousemove', (e) => {
             const rect = this.canvas.getBoundingClientRect();
@@ -891,29 +932,83 @@ class PlotEngine {
     }
     clearAllFunctions() { this.functions.clear(); this.colorIndex = 0; }
     drawFunction(functionData) {
-        if (!functionData.visible) return;
-        this.ctx.strokeStyle = functionData.color;
-        this.ctx.lineWidth = 2.5;
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-        const step = (this.xMax - this.xMin) / (this.width * 2);
-        let isDrawing = false, prevY = null;
-        this.ctx.beginPath();
-        for (let x = this.xMin; x <= this.xMax; x += step) {
-            try {
-                const y = functionData.func(x);
-                if (isNaN(y) || !isFinite(y)) { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; continue; }
-                if (y < this.yMin - (this.yMax - this.yMin) * 0.1 || y > this.yMax + (this.yMax - this.yMin) * 0.1) { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; continue; }
-                if (prevY !== null && prevY * y < 0) { const root = this.bisection(functionData.func, x - step, x); if (root !== null) this.drawAxisIntersection(root, 0, 'x'); }
-                const screenPos = this.worldToScreen(x, y);
-                if (!isDrawing) { this.ctx.beginPath(); this.ctx.moveTo(screenPos.x, screenPos.y); isDrawing = true; }
-                else this.ctx.lineTo(screenPos.x, screenPos.y);
-                prevY = y;
-            } catch { if (isDrawing) { this.ctx.stroke(); isDrawing = false; } prevY = null; }
+    this.ctx.strokeStyle = functionData.color;
+    this.ctx.lineWidth = 2.5;
+    this.ctx.lineCap = 'round';
+    this.ctx.lineJoin = 'round';
+
+    const step = (this.xMax - this.xMin) / this.width;
+
+    let firstPoint = true;
+    let prevY = null;
+    let xAxisIntersections = [];
+
+    this.ctx.beginPath();
+
+    for (let x = this.xMin; x <= this.xMax; x += step) {
+        try {
+            const y = functionData.func(x);
+
+            if (!isFinite(y) || isNaN(y)) {
+                firstPoint = true;
+                prevY = null;
+                continue;
+            }
+
+            if (prevY !== null && prevY * y < 0) {
+                const root = this.bisection(
+                    functionData.func,
+                    x - step,
+                    x
+                );
+
+                if (root !== null) {
+                    xAxisIntersections.push(root);
+                }
+            }
+
+            if (
+                y < this.yMin - (this.yMax - this.yMin) * 5 ||
+                y > this.yMax + (this.yMax - this.yMin) * 5
+            ) {
+                firstPoint = true;
+                prevY = null;
+                continue;
+            }
+
+            const screenPos = this.worldToScreen(x, y);
+
+            if (firstPoint) {
+                this.ctx.moveTo(screenPos.x, screenPos.y);
+                firstPoint = false;
+            } else {
+                this.ctx.lineTo(screenPos.x, screenPos.y);
+            }
+
+            prevY = y;
+
+        } catch (e) {
+            firstPoint = true;
+            prevY = null;
         }
-        if (isDrawing) this.ctx.stroke();
-        if (this.xMin <= 0 && this.xMax >= 0) { try { const y = functionData.func(0); if (isFinite(y) && y >= this.yMin && y <= this.yMax) this.drawAxisIntersection(0, y, 'y'); } catch {} }
     }
+
+    this.ctx.stroke();
+
+    for (const root of xAxisIntersections) {
+        this.drawAxisIntersection(root, 0, 'x');
+    }
+
+    if (this.xMin <= 0 && this.xMax >= 0) {
+        try {
+            const y = functionData.func(0);
+
+            if (isFinite(y) && !isNaN(y)) {
+                this.drawAxisIntersection(0, y, 'y');
+            }
+        } catch {}
+    }
+}
     drawAxisIntersection(x, y, axis) {
         const screenPos = this.worldToScreen(x, y);
         this.ctx.beginPath();

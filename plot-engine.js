@@ -33,20 +33,26 @@ class PlotEngine {
         const dpr = window.devicePixelRatio || 1;
         const rect = this.canvas.getBoundingClientRect();
         
+        // 获取画布尺寸，如果还未渲染则使用默认值
+        let canvasWidth = rect.width || this.canvas.width || 800;
+        let canvasHeight = rect.height || this.canvas.height || 600;
+        
         // 设置画布的实际尺寸
-        this.canvas.width = rect.width * dpr;
-        this.canvas.height = rect.height * dpr;
+        this.canvas.width = canvasWidth * dpr;
+        this.canvas.height = canvasHeight * dpr;
         
         // 缩放上下文以匹配设备像素比
         this.ctx.scale(dpr, dpr);
         
         // 设置CSS尺寸
-        this.canvas.style.width = rect.width + 'px';
-        this.canvas.style.height = rect.height + 'px';
+        this.canvas.style.width = canvasWidth + 'px';
+        this.canvas.style.height = canvasHeight + 'px';
         
-        // 存储绘图区域尺寸
-        this.width = rect.width;
-        this.height = rect.height;
+        // 存储绘图区域尺寸（使用CSS尺寸，因为上下文已被缩放）
+        this.width = canvasWidth;
+        this.height = canvasHeight;
+        
+        console.log('高DPI设置完成:', 'dpr=' + dpr, '实际像素=' + this.canvas.width + 'x' + this.canvas.height, 'CSS尺寸=' + this.width + 'x' + this.height);
     }
 
     /**
@@ -358,23 +364,46 @@ class PlotEngine {
     drawFunction(functionData) {
         if (!functionData.visible) return;
         
+        console.log('绘制函数:', functionData.expression);
+        console.log('视图范围:', this.xMin, this.xMax, this.yMin, this.yMax);
+        console.log('画布尺寸:', this.width, this.height);
+        
+        // 确保上下文状态正确
+        this.ctx.globalAlpha = 1.0;
         this.ctx.strokeStyle = functionData.color;
         this.ctx.lineWidth = 2.5;
         this.ctx.lineCap = 'round';
         this.ctx.lineJoin = 'round';
         
+        // 测试：绘制一条对角线
+        this.ctx.beginPath();
+        this.ctx.moveTo(10, 10);
+        this.ctx.lineTo(100, 100);
+        this.ctx.stroke();
+        console.log('测试线已绘制');
+        
         const step = (this.xMax - this.xMin) / (this.width * 2); // 高精度采样
         let isDrawing = false;
         let prevY = null;
+        let pointCount = 0;
+        let startX = null;
+        let startY = null;
         
-        this.ctx.beginPath();
+        console.log('开始绘制函数曲线');
         
         for (let x = this.xMin; x <= this.xMax; x += step) {
             try {
                 const y = functionData.func(x);
                 
+                // 调试：每隔100个点输出一次
+                if (pointCount % 100 === 0) {
+                    console.log(`点 (${x.toFixed(2)}, ${y})`);
+                }
+                pointCount++;
+                
                 // 检查是否为有效数值
                 if (isNaN(y) || !isFinite(y)) {
+                    console.log(`无效值: x=${x}, y=${y}`);
                     if (isDrawing) {
                         this.ctx.stroke();
                         isDrawing = false;
@@ -383,9 +412,10 @@ class PlotEngine {
                     continue;
                 }
                 
-                // 检查是否在显示范围内
-                if (y < this.yMin - (this.yMax - this.yMin) * 0.1 || 
-                    y > this.yMax + (this.yMax - this.yMin) * 0.1) {
+                // 检查是否在显示范围内（考虑10%的边界）
+                const margin = (this.yMax - this.yMin) * 0.1;
+                if (y < this.yMin - margin || y > this.yMax + margin) {
+                    console.log(`超出范围: x=${x}, y=${y} (范围: ${this.yMin}-${this.yMax})`);
                     if (isDrawing) {
                         this.ctx.stroke();
                         isDrawing = false;
@@ -403,11 +433,16 @@ class PlotEngine {
                 }
                 
                 const screenPos = this.worldToScreen(x, y);
+                console.log(`屏幕坐标: (${screenPos.x.toFixed(2)}, ${screenPos.y.toFixed(2)})`);
                 
                 if (!isDrawing) {
+                    // 开始新路径
                     this.ctx.beginPath();
                     this.ctx.moveTo(screenPos.x, screenPos.y);
+                    startX = x;
+                    startY = y;
                     isDrawing = true;
+                    console.log(`开始新路径: (${startX}, ${startY})`);
                 } else {
                     this.ctx.lineTo(screenPos.x, screenPos.y);
                 }
@@ -415,6 +450,7 @@ class PlotEngine {
                 prevY = y;
                 
             } catch (error) {
+                console.log('绘制错误:', error);
                 if (isDrawing) {
                     this.ctx.stroke();
                     isDrawing = false;
@@ -425,6 +461,9 @@ class PlotEngine {
         
         if (isDrawing) {
             this.ctx.stroke();
+            console.log('完成路径绘制，共绘制', pointCount, '个点');
+        } else {
+            console.log('没有绘制任何点');
         }
         
         // 检测Y轴交点（x=0）
