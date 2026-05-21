@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>function-plot 测试</title>
+    <script src="lib/function-plot.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        #plot-container {
+            width: 100%;
+            height: 400px;
+            border: 1px solid #ddd;
+            margin: 20px 0;
+        }
+        .controls {
+            margin: 20px 0;
+        }
+        input, button {
+            padding: 8px 12px;
+            margin: 5px;
+        }
+        button {
+            background: #3182ce;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #2c5282;
+        }
+        .quick-tests {
+            margin: 20px 0;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .quick-tests button {
+            background: #38a169;
+        }
+    </style>
+</head>
+<body>
+    <h1>function-plot 测试页面</h1>
+    
+    <div class="quick-tests">
+        <button onclick="test1()">一次函数: y = x (第三象限)</button>
+        <button onclick="test2()">二次函数: y = x^2</button>
+        <button onclick="test3()">反比例函数: y = 1/x</button>
+        <button onclick="test4()">三角函数: y = sin(x)</button>
+        <button onclick="test5()">多函数测试</button>
+    </div>
+    
+    <div class="controls">
+        <input type="text" id="function1" value="x^2" placeholder="函数1">
+        <input type="text" id="function2" value="x + 1" placeholder="函数2">
+        <input type="text" id="function3" value="" placeholder="函数3">
+        <button onclick="plot()">绘制</button>
+    </div>
+    
+    <div id="plot-container"></div>
+    
+    <div id="status"></div>
+    
+    <script>
+        console.log('function-plot 是否加载:', typeof functionPlot !== 'undefined');
+        
+        if (typeof functionPlot !== 'undefined') {
+            document.getElementById('status').innerHTML = '✅ function-plot 加载成功';
+        } else {
+            document.getElementById('status').innerHTML = '❌ function-plot 未加载';
+        }
+        
+        function test1() {
+            document.getElementById('function1').value = 'x';
+            document.getElementById('function2').value = '';
+            document.getElementById('function3').value = '';
+            plot();
+        }
+        
+        function test2() {
+            document.getElementById('function1').value = 'x^2';
+            document.getElementById('function2').value = '';
+            document.getElementById('function3').value = '';
+            plot();
+        }
+        
+        function test3() {
+            document.getElementById('function1').value = '1/x';
+            document.getElementById('function2').value = '';
+            document.getElementById('function3').value = '';
+            plot();
+        }
+        
+        function test4() {
+            document.getElementById('function1').value = 'sin(x)';
+            document.getElementById('function2').value = '';
+            document.getElementById('function3').value = '';
+            plot();
+        }
+        
+        function test5() {
+            document.getElementById('function1').value = 'x';
+            document.getElementById('function2').value = 'x^2';
+            document.getElementById('function3').value = '-x + 2';
+            plot();
+        }
+        
+        function plot() {
+            const f1 = document.getElementById('function1').value;
+            const f2 = document.getElementById('function2').value;
+            const f3 = document.getElementById('function3').value;
+            
+            const data = [];
+            if (f1) data.push({ fn: f1, graphType: 'polyline', color: '#3182ce' });
+            if (f2) data.push({ fn: f2, graphType: 'polyline', color: '#e53e3e' });
+            if (f3) data.push({ fn: f3, graphType: 'polyline', color: '#38a169' });
+            
+            try {
+                functionPlot({
+                    target: '#plot-container',
+                    width: 800,
+                    height: 400,
+                    xAxis: {
+                        domain: [-10, 10],
+                        label: 'x'
+                    },
+                    yAxis: {
+                        domain: [-10, 10],
+                        label: 'y'
+                    },
+                    grid: true,
+                    data: data
+                });
+                document.getElementById('status').innerHTML = '✅ 绘制成功！';
+            } catch (e) {
+                console.error(e);
+                document.getElementById('status').innerHTML = '❌ 绘制错误: ' + e.message;
+            }
+        }
+        
+        // 初始绘制
+        plot();
+    </script>
+</body>
+</html>
